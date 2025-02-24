@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Security.Claims;
 
 namespace Todo.API
@@ -12,6 +13,13 @@ namespace Todo.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            builder.Services.AddSerilog();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -70,7 +78,7 @@ namespace Todo.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
-                    c.OAuthClientId(builder.Configuration["Auth0:TestClientId"]);
+                    c.OAuthClientId(builder.Configuration["Auth0:SwaggerClientId"]);
                 });
             }
 
